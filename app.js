@@ -3,16 +3,18 @@ import axios from "axios";
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
   form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const username = document.querySelector("input").value;
+    event.preventDefault();
+    const username = document.querySelector("input").value;
       
-      const response = await axios.get(
-          `https://api.github.com/users/${username}`
-          );
-          console.log(response.data);
-          
-          const card = createCard(response.data);
-          document.querySelector("#container").insertAdjacentHTML("beforeend", card);
+    let response = ""
+    try {
+        response = await axios.get(`https://api.github.com/users/${username}`);
+    } catch (error) {
+        alert("Username not found");
+    };
+
+    const card = createCard(response.data);
+    document.querySelector("#container").insertAdjacentHTML("afterbegin", card);
   });
 });
 

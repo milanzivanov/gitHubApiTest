@@ -1929,10 +1929,17 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async event => {
     event.preventDefault();
     const username = document.querySelector("input").value;
-    const response = await _axios.default.get("https://api.github.com/users/".concat(username));
-    console.log(response.data);
+    let response = "";
+
+    try {
+      response = await _axios.default.get("https://api.github.com/users/".concat(username));
+    } catch (error) {
+      alert("Username not found");
+    }
+
+    ;
     const card = createCard(response.data);
-    document.querySelector("#container").insertAdjacentHTML("beforeend", card);
+    document.querySelector("#container").insertAdjacentHTML("afterbegin", card);
   });
 });
 
