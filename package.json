@@ -11,5 +11,8 @@
   "license": "ISC",
   "browserslist": [
     "since 2017-06"
-  ]
+  ],
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
 }
