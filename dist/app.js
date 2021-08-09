@@ -1925,21 +1925,46 @@ var _axios = _interopRequireDefault(require("axios"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Avoid duplicates
+  const usernames = [];
   const form = document.querySelector("form");
   form.addEventListener("submit", async event => {
     event.preventDefault();
-    const username = document.querySelector("input").value;
+    const username = document.querySelector("input").value; // Prevent empty username
+
+    if (!username) {
+      alert("Enter a username");
+      return;
+    } // Avoid duplicates
+
+
+    if (usernames.includes(username)) {
+      alert("You already searched for this");
+      return;
+    }
+
+    usernames.push(username); // Clear the input field
+
+    document.querySelector("input").value = ""; // Handle user not found
+
     let response = "";
 
     try {
       response = await _axios.default.get("https://api.github.com/users/".concat(username));
     } catch (error) {
-      alert("Username not found");
+      if (404 === error.response.status) {
+        alert("Username not found");
+      } else {
+        alert("Error");
+        console.log(error.response);
+      }
     }
 
-    ;
-    const card = createCard(response.data);
-    document.querySelector("#container").insertAdjacentHTML("afterbegin", card);
+    if (response) {
+      const card = createCard(response.data);
+      document.querySelector("#container") // Showing the last user on top
+      .insertAdjacentHTML("afterbegin", card);
+    }
   });
 });
 

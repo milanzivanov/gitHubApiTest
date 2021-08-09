@@ -1,20 +1,50 @@
 import axios from "axios";
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Avoid duplicates
+  const usernames = [];
+
   const form = document.querySelector("form");
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const username = document.querySelector("input").value;
-      
-    let response = ""
-    try {
-        response = await axios.get(`https://api.github.com/users/${username}`);
-    } catch (error) {
-        alert("Username not found");
-    };
 
-    const card = createCard(response.data);
-    document.querySelector("#container").insertAdjacentHTML("afterbegin", card);
+    // Prevent empty username
+    if (!username) {
+        alert("Enter a username");
+        return;
+    }
+
+    // Avoid duplicates
+    if (usernames.includes(username)) {
+        alert("You already searched for this");
+        return;
+    }
+    usernames.push(username);
+
+    // Clear the input field
+    document.querySelector("input").value = "";
+
+    // Handle user not found
+    let response = "";
+    try {
+      response = await axios.get(`https://api.github.com/users/${username}`);
+    } catch (error) {
+      if (404 === error.response.status) {
+        alert("Username not found");
+      } else {
+        alert("Error");
+        console.log(error.response);
+      }
+    }
+
+    if (response) {
+      const card = createCard(response.data);
+      document
+        .querySelector("#container")
+        // Showing the last user on top
+        .insertAdjacentHTML("afterbegin", card);
+    }
   });
 });
 
@@ -68,4 +98,3 @@ const createCard = (data) => `
     </div>
   </div>
 `;
-
